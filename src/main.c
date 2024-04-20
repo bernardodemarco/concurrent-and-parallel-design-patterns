@@ -3,7 +3,7 @@
 #include <semaphore.h>
 
 int main() {
-    printf("Autonomous cars!");
+    printf("Autonomous cars!\n");
 
     return 0;
 }
