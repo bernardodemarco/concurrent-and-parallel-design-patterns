@@ -1,8 +1,21 @@
+CC=gcc
+
+FLAGS=-pthread \
+      -o
+
+BUILD=./build
+
+SRC=./src
+
+C_FILES=$(SRC)/*.c \
+        $(SRC)/sensor/*.c \
+		$(SRC)/utils/*.c
+
 compile:
-	gcc ./src/main.c -Wall -pthread -o ./build/main
+	$(CC) $(C_FILES) $(FLAGS) $(BUILD)/app
 run:
-	./build/main
-build-and-run:
-	gcc ./src/main.c -Wall -pthread -o ./build/main && ./build/main
+	$(BUILD)/app
+app:
+	$(CC) $(C_FILES) $(FLAGS) $(BUILD)/app && $(BUILD)/app
 clean:
-	rm ./build/*
+	rm $(BUILD)/*

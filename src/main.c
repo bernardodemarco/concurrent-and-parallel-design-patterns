@@ -1,9 +1,13 @@
 #include <stdio.h>
-#include <pthread.h>
-#include <semaphore.h>
+#include "./sensor/sensor.h"
 
 int main() {
-    printf("Autonomous cars!\n");
+    printf("Welcome to the Autonomous Cars Parallel Application!\n");
+
+    init_sensors();
+    syncronize_threads();
+
+    printf("THREADS MUST BE SYNCRONIZED...\n");
 
     return 0;
 }
