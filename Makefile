@@ -9,7 +9,7 @@ SRC=./src
 
 C_FILES=$(SRC)/*.c \
         $(SRC)/sensor/*.c \
-		$(SRC)/utils/*.c
+        $(SRC)/utils/*.c
 
 compile:
 	$(CC) $(C_FILES) $(FLAGS) $(BUILD)/app

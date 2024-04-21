@@ -24,7 +24,7 @@ void init_sensors() {
         sensors_ids[i] = i;
         int err = pthread_create(&(sensors_threads_ids[i]), NULL, &sensor_thread, &(sensors_ids[i]));
         if (err) {
-            printf("Error creating thread!\n");
+            printf("Error creating sensor thread %d\n", i);
             exit(1);
         }
     }
@@ -34,7 +34,7 @@ void syncronize_threads() {
     for (int i = 0; i < NUM_SENSORS; i++) {
         int err = pthread_join(sensors_threads_ids[i], NULL);
         if (err) {
-            printf("Error sincronizing threads!");
+            printf("Error syncronizying sensor thread %d\n", i);
             exit(1);
         }
     }
