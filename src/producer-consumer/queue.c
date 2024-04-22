@@ -1,22 +1,17 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef struct Node {
-    int value;
-    struct Node *next;
-} Node;
+#include "./queue.h"
+#include "./../globals.h"
 
-typedef struct {
-    Node *head;
-    Node *tail;
-    void (* enqueue)(int);
-    int (* dequeue)();
-} Queue;
-
-Queue *queue;
-
-void free_node(Node *node) {
-    free(node);
+void init_queue() {
+    queue = (Queue *) malloc(sizeof(Queue));
+    queue -> head = (Node *) malloc(sizeof(Node));
+    queue -> tail = (Node *) malloc(sizeof(Node));
+    queue -> head = NULL;
+    queue -> tail = NULL;
+    queue -> enqueue = enqueue;
+    queue -> dequeue = dequeue;
 }
 
 void free_queue() {
@@ -38,6 +33,10 @@ void enqueue(int value) {
 
     queue -> tail -> next = element_to_be_inserted;
     queue -> tail = element_to_be_inserted;
+}
+
+void free_node(Node *node) {
+    free(node);
 }
 
 int dequeue() {
@@ -65,17 +64,7 @@ void print_queue() {
     printf("END\n");
 }
 
-void init_queue() {
-    queue = (Queue *) malloc(sizeof(Queue));
-    queue -> head = (Node *) malloc(sizeof(Node));
-    queue -> tail = (Node *) malloc(sizeof(Node));
-    queue -> head = NULL;
-    queue -> tail = NULL;
-    queue -> enqueue = enqueue;
-    queue -> dequeue = dequeue;
-}
-
-int main() {
+int test_queue() {
     init_queue();
     
     queue -> enqueue(10);
