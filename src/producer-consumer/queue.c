@@ -4,20 +4,6 @@
 #include "./queue.h"
 #include "./../globals.h"
 
-void init_queue() {
-    queue = (Queue *) malloc(sizeof(Queue));
-    queue -> head = (Node *) malloc(sizeof(Node));
-    queue -> tail = (Node *) malloc(sizeof(Node));
-    queue -> head = NULL;
-    queue -> tail = NULL;
-    queue -> enqueue = enqueue;
-    queue -> dequeue = dequeue;
-}
-
-void free_queue() {
-    free(queue);
-}
-
 void enqueue(int value) {
     Node *element_to_be_inserted = (Node *) malloc(sizeof(Node));
     
@@ -50,6 +36,20 @@ int dequeue() {
 
     free_node(element_to_be_removed);
     return value_to_be_returned;
+}
+
+void init_queue() {
+    queue = (Queue *) malloc(sizeof(Queue));
+    queue -> head = (Node *) malloc(sizeof(Node));
+    queue -> tail = (Node *) malloc(sizeof(Node));
+    queue -> head = NULL;
+    queue -> tail = NULL;
+    queue -> enqueue = enqueue;
+    queue -> dequeue = dequeue;
+}
+
+void free_queue() {
+    free(queue);
 }
 
 void print_queue() {
