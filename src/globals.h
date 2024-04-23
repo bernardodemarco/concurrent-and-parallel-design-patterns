@@ -2,10 +2,12 @@
 #define GLOBALS_H
 
     #include <pthread.h>
-    #include "./producer-consumer/queue.h"
+    #include "./data-structures/queue/queue.h"
     #include "./sensor/sensor.h"
+    #include "./orchestrator/orchestrator.h"
 
     extern SensorsController *sensors_controller;
     extern Queue *queue;
+    extern Orchestrator *orchestrator;
 
 #endif

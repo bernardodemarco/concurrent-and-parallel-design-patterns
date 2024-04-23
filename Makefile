@@ -9,7 +9,8 @@ SRC=./src
 
 C_FILES=$(SRC)/*.c \
         $(SRC)/sensor/*.c \
-        $(SRC)/producer-consumer/*.c \
+        $(SRC)/orchestrator/*.c \
+        $(SRC)/data-structures/queue/*.c \
         $(SRC)/utils/*.c \
 
 compile:
