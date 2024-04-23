@@ -12,6 +12,7 @@ C_FILES=$(SRC)/*.c \
         $(SRC)/orchestrator/*.c \
         $(SRC)/data-structures/queue/*.c \
         $(SRC)/utils/*.c \
+        $(SRC)/lib/thread-pool/thpool.c \
 
 compile:
 	$(CC) $(C_FILES) $(FLAGS) $(BUILD)/app

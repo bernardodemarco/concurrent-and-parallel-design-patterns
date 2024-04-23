@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 #include "./../globals.h"
+// #include "./../lib/thread-pool/thpool.h"
 
 void *orchestrator_thread(void *args) {
     while (true) {
@@ -21,11 +22,13 @@ void *orchestrator_thread(void *args) {
         }
 
         printf("Received %d from the sensors\n", captured_value);
+        // thpool_add_work(orchestrator -> thread_pool);
     }
 }
 
 void init_orchestrator() {
     orchestrator = (Orchestrator *) malloc(sizeof(Orchestrator));
+    orchestrator -> thread_pool = thpool_init(4);
     pthread_create(&(orchestrator -> thread_id), NULL, orchestrator_thread, NULL);
 }
 
