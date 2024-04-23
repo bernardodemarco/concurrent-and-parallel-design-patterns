@@ -9,7 +9,7 @@
 
     void *sensor_thread(void* args);
     void init_sensors();
-    void syncronize_threads();
+    void syncronize_sensors();
     void kill_sensors();
 
 #endif

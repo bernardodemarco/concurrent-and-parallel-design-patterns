@@ -6,5 +6,6 @@
     } Orchestrator;
 
     void init_orchestrator();
+    void syncronize_orchestrator();
 
 #endif

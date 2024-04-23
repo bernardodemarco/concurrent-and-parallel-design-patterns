@@ -12,9 +12,14 @@ void *sensor_thread(void *args) {
         sleep(task_duration_time);
 
         int captured_value = rand() % 1001;
-        printf("Took %ds to produce: %d\n", task_duration_time, captured_value);
+        // printf("Took %ds to produce: %d\n", task_duration_time, captured_value);
+        
         // send to buffer
+        pthread_mutex_lock(&producer_consumer_mutex);
+        queue -> enqueue(captured_value);
+        pthread_mutex_unlock(&producer_consumer_mutex);
 
+        printf("Took %ds to capture and send to the buffer: %d\n", task_duration_time, captured_value);
     }
 }
 
@@ -34,7 +39,7 @@ void init_sensors() {
     }
 }
 
-void syncronize_threads() {
+void syncronize_sensors() {
     for (int i = 0; i < sensors_controller -> num_of_sensors; i++) {
         int err = pthread_join(sensors_controller -> threads_ids[i], NULL);
         if (err) {
@@ -60,5 +65,3 @@ void kill_sensors() {
     kill_threads();
     free_sensors();
 }
-
-
