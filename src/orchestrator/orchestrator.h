@@ -1,6 +1,6 @@
 #ifndef ORCHESTRATOR_H
 #define ORCHESTRATOR_H
-    #include "./../lib/thread-pool/thpool.h"
+    #include "./../lib/C-Thread-Pool/thpool.h"
 
     typedef struct {
         pthread_t thread_id;
