@@ -6,38 +6,47 @@
 
 #include "./../globals.h"
 #include "./../utils/utils.h"
+#include "./../data-structures/hashmap/hashmap.h"
 // #include "./../lib/thread-pool/thpool.h"
+
+void print_output(int *actuator_args) {
+    printf("Changing: %d with value %d\n", actuator_args[0], actuator_args[1]);
+    sleep(1);
+    pthread_barrier_wait(&(orchestrator -> actuator_barrier));
+}
 
 void *update_actuador(void *args) {
     int actuator = ((int *) args)[0]; 
     int activity_level = ((int *) args)[1];
 
-    // update hash map
-    // KEY -> ACTUATOR
-    // VALUE -> ACTIVITY LEVEL
-    // HOLD FOR [2s, 3s]
-    // THEN WAIT IN THE BARRIER
-    // AFTER WAITING IN THE BARRIER -> EXIT
+    int time_to_hold = ((rand() % 1001) + 2000) / 1000;
+
+    pthread_mutex_lock(&(orchestrator -> hash_map_mutex));
+    orchestrator -> hash_map -> add_value(orchestrator -> hash_map -> table, actuator, activity_level);
+    sleep(time_to_hold);
+    pthread_mutex_unlock(&(orchestrator -> hash_map_mutex));
+
+    pthread_barrier_wait(&(orchestrator -> actuator_barrier));
 }
 
 void manage_actuators(void *args) {
     int captured_value = *((int *) args);
 
+// check the scope of this barrier
     pthread_barrier_init(&orchestrator -> actuator_barrier, NULL, 2);
     printf("Received %d from the sensors\n", captured_value);
 
     int actuator = captured_value % orchestrator -> num_of_actuators;
     int activity_level = rand() % 101;
 
+// do not need to use malloc here
     int *update_actuator_args = (int *) malloc(2 * sizeof(int));
     update_actuator_args[0] = actuator;
     update_actuator_args[1] = activity_level;
 
     pthread_create(&(orchestrator -> actuator_thread_id), NULL, update_actuador, (void *) update_actuator_args);
 
-    // PRINT VALUES TO THE CONSOLE
-    // Alterando: <atuador> com valor <nível de atividade>\n
-    // HOLD FOR 1 SEC
+    print_output(update_actuator_args);
     // WAIT IN THE BARRIER
     // MOVE ON
 }
@@ -58,14 +67,16 @@ void *orchestrator_thread(void *args) {
             continue;
         }
 
-        // printf("Received %d from the sensors\n", captured_value);
+        printf("Received %d from the sensors\n", captured_value);
         thpool_add_work(orchestrator -> thread_pool, (void *) manage_actuators, (void *) &captured_value);
     }
 }
 
-void init_orchestrator() {
+void init_orchestrator(int num_of_actuators) {
     orchestrator = (Orchestrator *) malloc(sizeof(Orchestrator));
-    orchestrator -> num_of_actuators = get_int_input("Enter the number of actuators of the vehicle: \n");
+    orchestrator -> num_of_actuators = num_of_actuators;
+    orchestrator -> hash_map = init_hash_map(orchestrator -> num_of_actuators);
+    pthread_mutex_init(&(orchestrator -> hash_map_mutex), NULL);
     pthread_create(&(orchestrator -> thread_id), NULL, orchestrator_thread, NULL);
 }
 

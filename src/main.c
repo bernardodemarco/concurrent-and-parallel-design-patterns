@@ -5,22 +5,36 @@
 #include "./globals.h"
 #include "./sensor/sensor.h"
 #include "./orchestrator/orchestrator.h"
-// #include "./lib/thread-pool/thpool.h"
 #include "./data-structures/queue/queue.h"
+#include "./utils/utils.h"
+
+typedef struct {
+    int num_of_sensors;
+    int num_of_actuators;
+} Input;
+
 
 void suspend_main_thread() {
     syncronize_sensors();
     syncronize_orchestrator();
 }
 
+Input get_inputs() {
+    Input inputs;
+    inputs.num_of_sensors = get_int_input("Enter the number of sensors of the vehicle: \n");
+    inputs.num_of_actuators = get_int_input("Enter the number of actuators of the vehicle: \n");
+    return inputs;
+}
+
 int main() {
     printf("Welcome to the Autonomous Cars Parallel Application!\n");
+    Input inputs = get_inputs();
 
     pthread_mutex_init(&producer_consumer_mutex, NULL);
 
     init_queue();
-    init_sensors();
-    init_orchestrator();
+    init_sensors(inputs.num_of_sensors);
+    init_orchestrator(inputs.num_of_actuators);
 
     suspend_main_thread();
     pthread_mutex_destroy(&producer_consumer_mutex);

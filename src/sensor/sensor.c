@@ -23,9 +23,9 @@ void *sensor_thread(void *args) {
     }
 }
 
-void init_sensors() {
+void init_sensors(int num_of_sensors) {
     sensors_controller = (SensorsController *) malloc(sizeof(SensorsController));
-    sensors_controller -> num_of_sensors = get_int_input("Enter the number of sensors of the vehicle: \n");     
+    sensors_controller -> num_of_sensors = num_of_sensors;     
     sensors_controller -> threads_ids = (pthread_t *) malloc(sensors_controller -> num_of_sensors * sizeof(pthread_t));
     sensors_controller -> ids = (int *) malloc(sensors_controller -> num_of_sensors * sizeof(int));
 
