@@ -15,6 +15,10 @@ typedef struct {
     pthread_barrier_t *syncronize_actuator_tasks;
 } UpdateActuatorArgs;
 
+bool has_failed() {
+    return (rand() % 5) == 0;
+}
+
 void print_output(UpdateActuatorArgs *actuator_args) {
     pthread_barrier_t *barrier = actuator_args -> syncronize_actuator_tasks;
     int actuator = actuator_args -> actuator; 
