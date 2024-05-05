@@ -15,11 +15,9 @@ C_FILES=$(SRC)/*.c \
         $(SRC)/utils/*.c \
         $(SRC)/lib/C-Thread-Pool/thpool.c \
 
-compile:
+app:
 	$(CC) $(C_FILES) $(FLAGS) $(BUILD)/app
 run:
 	$(BUILD)/app
-app:
-	$(CC) $(C_FILES) $(FLAGS) $(BUILD)/app && $(BUILD)/app
 clean:
 	rm $(BUILD)/*
