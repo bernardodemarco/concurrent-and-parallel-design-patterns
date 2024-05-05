@@ -7,8 +7,6 @@
         pthread_t thread_id;
         threadpool thread_pool;
         int num_of_actuators;
-        pthread_t actuator_thread_id;
-        pthread_barrier_t actuator_barrier;
         pthread_mutex_t hash_map_mutex;
         HashMap* hash_map;
     } Orchestrator;
