@@ -10,7 +10,7 @@
 // #include "./../lib/thread-pool/thpool.h"
 
 void print_output(int *actuator_args) {
-    printf("Changing: %d with value %d\n", actuator_args[0], actuator_args[1]);
+    printf("Changing %d with value %d\n", actuator_args[0], actuator_args[1]);
     sleep(1);
     pthread_barrier_wait(&(orchestrator -> actuator_barrier));
 }
@@ -30,6 +30,7 @@ void *update_actuador(void *args) {
 }
 
 void manage_actuators(void *args) {
+    int update_actuator_args[2];
     int captured_value = *((int *) args);
 
 // check the scope of this barrier
@@ -39,12 +40,10 @@ void manage_actuators(void *args) {
     int actuator = captured_value % orchestrator -> num_of_actuators;
     int activity_level = rand() % 101;
 
-// do not need to use malloc here
-    int *update_actuator_args = (int *) malloc(2 * sizeof(int));
     update_actuator_args[0] = actuator;
     update_actuator_args[1] = activity_level;
 
-    pthread_create(&(orchestrator -> actuator_thread_id), NULL, update_actuador, (void *) update_actuator_args);
+    pthread_create(&(orchestrator -> actuator_thread_id), NULL, update_actuador, (void *) (&update_actuator_args));
 
     print_output(update_actuator_args);
     // WAIT IN THE BARRIER
