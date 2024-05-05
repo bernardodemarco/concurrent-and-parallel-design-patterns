@@ -2,38 +2,35 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <unistd.h>
-#include <stdbool.h>
 
 #include "./../globals.h"
 #include "./../utils/utils.h"
 #include "./../data-structures/hashmap/hashmap.h"
-// #include "./../lib/thread-pool/thpool.h"
 
 typedef struct {
     int actuator;
     int activity_level;
-    pthread_barrier_t *syncronize_actuator_tasks;
 } UpdateActuatorArgs;
 
-bool has_failed() {
+int has_failed() {
     return (rand() % 5) == 0;
 }
 
-void print_output(UpdateActuatorArgs *actuator_args) {
-    pthread_barrier_t *barrier = actuator_args -> syncronize_actuator_tasks;
+int print_output(UpdateActuatorArgs *actuator_args) {
     int actuator = actuator_args -> actuator; 
     int activity_level = actuator_args -> activity_level;
 
     printf("Changing %d with value %d\n", actuator, activity_level);
     sleep(1);
-    pthread_barrier_wait(barrier);
-    printf("print output waiting in the barrier\n");
+
+    int err = has_failed();
+    printf("exiting print_output(%d) | has_failed() = %d\n", actuator, err);
+    return err;
 }
 
 void *update_actuador(void *args) {
     UpdateActuatorArgs *actuator_args = (UpdateActuatorArgs *) args;
 
-    pthread_barrier_t *barrier = actuator_args -> syncronize_actuator_tasks;
     int actuator = actuator_args -> actuator; 
     int activity_level = actuator_args -> activity_level;
 
@@ -44,48 +41,46 @@ void *update_actuador(void *args) {
     sleep(time_to_hold);
     pthread_mutex_unlock(&(orchestrator -> hash_map_mutex));
 
-    pthread_barrier_wait(barrier);
-    printf("update actuator waiting in the barrier\n");
+    int err = has_failed();
+    printf("exiting update_actuator(%d) | has_failed() = %d\n", actuator, err);
+    pthread_exit(&err);
 }
 
 void manage_actuators(void *args) {
     UpdateActuatorArgs update_actuator_args;
     
     pthread_t actuator_thread_id;
-    
-    pthread_barrier_t syncronize_actuator_tasks;
-    pthread_barrier_init(&syncronize_actuator_tasks, NULL, 2);
+
+    int *update_actuator_err;
+    int print_output_err;
 
     int captured_value = *((int *) args);
-    printf("Received %d from the sensors\n", captured_value);
 
     int actuator = captured_value % orchestrator -> num_of_actuators;
     int activity_level = rand() % 101;
 
-    update_actuator_args.syncronize_actuator_tasks = &syncronize_actuator_tasks;
     update_actuator_args.actuator = actuator;
     update_actuator_args.activity_level = activity_level;
 
-// change this thread id
     pthread_create(&actuator_thread_id, NULL, update_actuador, (void *) (&update_actuator_args));
 
-    print_output(&update_actuator_args);
-    // WAIT IN THE BARRIER
-    // MOVE ON
+    print_output_err = print_output(&update_actuator_args);
 
+    pthread_join(actuator_thread_id, (void *) &update_actuator_err);
     printf("threads must be syncronized!\n");
-
-    pthread_barrier_destroy(&syncronize_actuator_tasks);
+    printf("update_actuator_err = %d\n", *update_actuator_err);
+    printf("print_output_err = %d\n", print_output_err);
+    if (*update_actuator_err || print_output_err) {
+        printf("Fail: %d\n", actuator);
+    }
 }
 
 void *orchestrator_thread(void *args) {
     orchestrator -> thread_pool = thpool_init(4);
 
-    while (true) {
-        // printf("I'll consume the bufffer!\n");
+    while (1) {
         sleep(2);
 
-        // consume buffer
         pthread_mutex_lock(&producer_consumer_mutex);
         int captured_value = queue -> dequeue();
         pthread_mutex_unlock(&producer_consumer_mutex);
