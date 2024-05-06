@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <pthread.h>
+
 #include "./../utils/utils.h"
 #include "./../globals.h"
 
@@ -14,14 +15,10 @@ void *sensor_thread(void *args) {
         sleep(task_duration_time);
 
         int captured_value = rand() % 1001;
-        // printf("Took %ds to produce: %d\n", task_duration_time, captured_value);
         
-        // send to buffer
         pthread_mutex_lock(&producer_consumer_mutex);
         queue -> enqueue(captured_value);
         pthread_mutex_unlock(&producer_consumer_mutex);
-
-        // printf("Took %ds to capture and send to the buffer: %d\n", task_duration_time, captured_value);
     }
 }
 
