@@ -23,9 +23,9 @@ int print_output(UpdateActuatorArgs *actuator_args) {
     printf("Changing %d with value %d\n", actuator, activity_level);
     sleep(1);
 
-    int err = has_failed();
-    printf("exiting print_output(%d) | has_failed() = %d\n", actuator, err);
-    return err;
+    // int err = has_failed();
+    // printf("exiting print_output(%d) | has_failed() = %d\n", actuator, err);
+    return has_failed();
 }
 
 void *update_actuador(void *args) {
@@ -36,18 +36,20 @@ void *update_actuador(void *args) {
 
     int time_to_hold = ((rand() % 1001) + 2000) / 1000;
 
-    printf("trying to go through (%d) the mutex...\n", actuator);
+    // printf("trying to go through (%d) the mutex...\n", actuator);
     pthread_mutex_lock(&(orchestrator -> hash_map_mutex));
     orchestrator -> hash_map -> add_value(orchestrator -> hash_map -> table, actuator, activity_level);
-    printf("before sleep (%d) inside of mutex...\n", actuator);
+    // printf("before sleep (%d) inside of mutex...\n", actuator);
     sleep(time_to_hold);
-    printf("after sleep (%d) inside of mutex...\n", actuator);
+    // printf("after sleep (%d) inside of mutex...\n", actuator);
     pthread_mutex_unlock(&(orchestrator -> hash_map_mutex));
 
     int err = has_failed();
-    printf("exiting update_actuator(%d) | has_failed() = %d\n", actuator, err);
+    // printf("exiting update_actuator(%d) | has_failed() = %d\n", actuator, err);
     pthread_exit(&err);
 }
+
+// test creating thread to print_output
 
 void manage_actuators(void *args) {
     UpdateActuatorArgs update_actuator_args;
@@ -61,7 +63,7 @@ void manage_actuators(void *args) {
     int captured_value = *captured_value_pointer;
 
     int actuator = captured_value % orchestrator -> num_of_actuators;
-    printf("recently generated actuator %d, captured value %d, num actuators %d\n", actuator, captured_value, orchestrator -> num_of_actuators);
+    // printf("recently generated actuator %d, captured value %d, num actuators %d\n", actuator, captured_value, orchestrator -> num_of_actuators);
     int activity_level = rand() % 101;
 
     update_actuator_args.actuator = actuator;
@@ -72,9 +74,9 @@ void manage_actuators(void *args) {
     print_output_err = print_output(&update_actuator_args);
 
     pthread_join(actuator_thread_id, (void *) &update_actuator_err);
-    printf("threads must be syncronized!\n");
-    printf("update_actuator_err = %d\n", *update_actuator_err);
-    printf("print_output_err = %d\n", print_output_err);
+    // printf("threads must be syncronized!\n");
+    // printf("update_actuator_err = %d\n", *update_actuator_err);
+    // printf("print_output_err = %d\n", print_output_err);
     if (*update_actuator_err || print_output_err) {
         printf("Fail: %d\n", actuator);
     }
@@ -101,7 +103,7 @@ void *orchestrator_thread(void *args) {
         }
 
         // remove print
-        printf("Received %d from the sensors\n", captured_value);
+        // printf("Received %d from the sensors\n", captured_value);
 
         int *captured_value_copy = (int *) malloc(sizeof(int)); 
         *captured_value_copy = captured_value;
