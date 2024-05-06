@@ -7,18 +7,13 @@
 #include "./../utils/utils.h"
 #include "./../data-structures/hashmap/hashmap.h"
 
-typedef struct {
-    int actuator;
-    int activity_level;
-} UpdateActuatorArgs;
-
 int has_failed() {
     return (rand() % 5) == 0;
 }
 
-int print_output(UpdateActuatorArgs *actuator_args) {
-    int actuator = actuator_args -> actuator; 
-    int activity_level = actuator_args -> activity_level;
+int print_output(int actuator_args[2]) {
+    int actuator = actuator_args[0]; 
+    int activity_level = actuator_args[1];
 
     pthread_mutex_lock(&(orchestrator -> console_mutex));
     printf("Changing %d with value %d\n", actuator, activity_level);
@@ -29,10 +24,10 @@ int print_output(UpdateActuatorArgs *actuator_args) {
 }
 
 void *update_actuador(void *args) {
-    UpdateActuatorArgs *actuator_args = (UpdateActuatorArgs *) args;
+    int *actuator_args = (int *) args;
 
-    int actuator = actuator_args -> actuator; 
-    int activity_level = actuator_args -> activity_level;
+    int actuator = actuator_args[0]; 
+    int activity_level = actuator_args[1];
 
     int time_to_hold = (rand() % 2) + 2;
 
@@ -46,7 +41,7 @@ void *update_actuador(void *args) {
 }
 
 void manage_actuators(void *args) {
-    UpdateActuatorArgs update_actuator_args;
+    int update_actuator_args[2];
     
     pthread_t actuator_thread_id;
 
@@ -59,12 +54,12 @@ void manage_actuators(void *args) {
     int actuator = captured_value % orchestrator -> num_of_actuators;
     int activity_level = rand() % 101;
 
-    update_actuator_args.actuator = actuator;
-    update_actuator_args.activity_level = activity_level;
+    update_actuator_args[0] = actuator;
+    update_actuator_args[1] = activity_level;
 
     pthread_create(&actuator_thread_id, NULL, update_actuador, (void *) (&update_actuator_args));
 
-    print_output_err = print_output(&update_actuator_args);
+    print_output_err = print_output(update_actuator_args);
 
     pthread_join(actuator_thread_id, (void *) &update_actuator_err);
     if (*update_actuator_err || print_output_err) {
