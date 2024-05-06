@@ -8,6 +8,8 @@
 
 void *sensor_thread(void *args) {
     while (true) {
+        // generate in ms then convert to s
+        // evaluate usage of seeds
         int task_duration_time = rand() % 5 + 1;
         sleep(task_duration_time);
 
@@ -19,7 +21,7 @@ void *sensor_thread(void *args) {
         queue -> enqueue(captured_value);
         pthread_mutex_unlock(&producer_consumer_mutex);
 
-        printf("Took %ds to capture and send to the buffer: %d\n", task_duration_time, captured_value);
+        // printf("Took %ds to capture and send to the buffer: %d\n", task_duration_time, captured_value);
     }
 }
 

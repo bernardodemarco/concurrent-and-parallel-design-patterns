@@ -36,9 +36,12 @@ void *update_actuador(void *args) {
 
     int time_to_hold = ((rand() % 1001) + 2000) / 1000;
 
+    printf("trying to go through (%d) the mutex...\n", actuator);
     pthread_mutex_lock(&(orchestrator -> hash_map_mutex));
     orchestrator -> hash_map -> add_value(orchestrator -> hash_map -> table, actuator, activity_level);
+    printf("before sleep (%d) inside of mutex...\n", actuator);
     sleep(time_to_hold);
+    printf("after sleep (%d) inside of mutex...\n", actuator);
     pthread_mutex_unlock(&(orchestrator -> hash_map_mutex));
 
     int err = has_failed();
@@ -54,9 +57,11 @@ void manage_actuators(void *args) {
     int *update_actuator_err;
     int print_output_err;
 
-    int captured_value = *((int *) args);
+    int *captured_value_pointer = (int *) args;
+    int captured_value = *captured_value_pointer;
 
     int actuator = captured_value % orchestrator -> num_of_actuators;
+    printf("recently generated actuator %d, captured value %d, num actuators %d\n", actuator, captured_value, orchestrator -> num_of_actuators);
     int activity_level = rand() % 101;
 
     update_actuator_args.actuator = actuator;
@@ -73,24 +78,34 @@ void manage_actuators(void *args) {
     if (*update_actuator_err || print_output_err) {
         printf("Fail: %d\n", actuator);
     }
+
+    free(captured_value_pointer);
 }
 
 void *orchestrator_thread(void *args) {
     orchestrator -> thread_pool = thpool_init(4);
 
     while (1) {
-        sleep(2);
+        // remove this sleep
+        // sleep(2);
+
+        // need to control producer consumer buffer size with semaphore
 
         pthread_mutex_lock(&producer_consumer_mutex);
         int captured_value = queue -> dequeue();
         pthread_mutex_unlock(&producer_consumer_mutex);
 
         if (captured_value == -1) {
+            // printf("captured -1, continueing\n");
             continue;
         }
 
+        // remove print
         printf("Received %d from the sensors\n", captured_value);
-        thpool_add_work(orchestrator -> thread_pool, (void *) manage_actuators, (void *) &captured_value);
+
+        int *captured_value_copy = (int *) malloc(sizeof(int)); 
+        *captured_value_copy = captured_value;
+        thpool_add_work(orchestrator -> thread_pool, (void *) manage_actuators, (void *) captured_value_copy);
     }
 }
 
