@@ -90,8 +90,10 @@ void *orchestrator_thread(void *args) {
 void init_orchestrator(int num_of_actuators) {
     orchestrator.num_of_actuators = num_of_actuators;
     orchestrator.hash_map = init_hash_map(orchestrator.num_of_actuators);
+
     pthread_mutex_init(&(orchestrator.hash_map_mutex), NULL);
     pthread_mutex_init(&(orchestrator.console_mutex), NULL);
+
     pthread_create(&(orchestrator.thread_id), NULL, orchestrator_thread, NULL);
 }
 
