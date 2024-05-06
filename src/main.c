@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <pthread.h>
 
-#include "./globals.h"
+#include "./globals/globals.h"
 #include "./sensor/sensor.h"
 #include "./orchestrator/orchestrator.h"
 #include "./data-structures/queue/queue.h"

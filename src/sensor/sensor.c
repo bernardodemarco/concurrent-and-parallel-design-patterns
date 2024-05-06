@@ -5,7 +5,7 @@
 #include <pthread.h>
 
 #include "./../utils/utils.h"
-#include "./../globals.h"
+#include "./../globals/globals.h"
 
 void *sensor_thread(void *args) {
     while (true) {

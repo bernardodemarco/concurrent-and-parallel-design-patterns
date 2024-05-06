@@ -3,7 +3,7 @@
 #include <pthread.h>
 #include <unistd.h>
 
-#include "./../globals.h"
+#include "./../globals/globals.h"
 #include "./../utils/utils.h"
 #include "./../data-structures/hashmap/hashmap.h"
 

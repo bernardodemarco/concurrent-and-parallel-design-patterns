@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #include "./queue.h"
-#include "./../../globals.h"
+#include "./../../globals/globals.h"
 
 void enqueue(int value) {
     Node *element_to_be_inserted = (Node *) malloc(sizeof(Node));

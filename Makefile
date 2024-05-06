@@ -12,6 +12,7 @@ C_FILES=$(SRC)/*.c \
         $(SRC)/orchestrator/*.c \
         $(SRC)/data-structures/queue/*.c \
         $(SRC)/data-structures/hashmap/*.c \
+        $(SRC)/globals/*.c \
         $(SRC)/utils/*.c \
         $(SRC)/lib/C-Thread-Pool/thpool.c \
 
