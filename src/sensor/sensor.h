@@ -4,7 +4,6 @@
     typedef struct {
         int num_of_sensors;
         pthread_t *threads_ids;
-        int *ids;
     } SensorsController;
 
     void *sensor_thread(void* args);

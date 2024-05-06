@@ -7,7 +7,7 @@
     #include "./../sensor/sensor.h"
     #include "./../orchestrator/orchestrator.h"
 
-    extern SensorsController *sensors_controller;
+    extern SensorsController sensors_controller;
     extern Queue *queue;
     extern Orchestrator *orchestrator;
     extern pthread_mutex_t producer_consumer_mutex;

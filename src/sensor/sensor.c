@@ -21,14 +21,11 @@ void *sensor_thread(void *args) {
 }
 
 void init_sensors(int num_of_sensors) {
-    sensors_controller = (SensorsController *) malloc(sizeof(SensorsController));
-    sensors_controller -> num_of_sensors = num_of_sensors;     
-    sensors_controller -> threads_ids = (pthread_t *) malloc(sensors_controller -> num_of_sensors * sizeof(pthread_t));
-    sensors_controller -> ids = (int *) malloc(sensors_controller -> num_of_sensors * sizeof(int));
+    sensors_controller.num_of_sensors = num_of_sensors;     
+    sensors_controller.threads_ids = (pthread_t *) malloc(sensors_controller.num_of_sensors * sizeof(pthread_t));
 
-    for (int i = 0; i < sensors_controller -> num_of_sensors; i++) {
-        sensors_controller -> ids[i] = i;
-        int err = pthread_create(&(sensors_controller -> threads_ids[i]), NULL, &sensor_thread, &(sensors_controller -> ids[i]));
+    for (int i = 0; i < sensors_controller.num_of_sensors; i++) {
+        int err = pthread_create(&(sensors_controller.threads_ids[i]), NULL, &sensor_thread, NULL);
         if (err) {
             printf("Error creating sensor thread %d\n", i);
             exit(1);
@@ -37,8 +34,8 @@ void init_sensors(int num_of_sensors) {
 }
 
 void syncronize_sensors() {
-    for (int i = 0; i < sensors_controller -> num_of_sensors; i++) {
-        int err = pthread_join(sensors_controller -> threads_ids[i], NULL);
+    for (int i = 0; i < sensors_controller.num_of_sensors; i++) {
+        int err = pthread_join(sensors_controller.threads_ids[i], NULL);
         if (err) {
             printf("Error syncronizying sensor thread %d\n", i);
             exit(1);
@@ -47,15 +44,13 @@ void syncronize_sensors() {
 }
 
 void kill_threads() {
-    for (int i = 0; i < sensors_controller -> num_of_sensors; i++) {
-        pthread_cancel(sensors_controller -> threads_ids[i]);
+    for (int i = 0; i < sensors_controller.num_of_sensors; i++) {
+        pthread_cancel(sensors_controller.threads_ids[i]);
     }
 }
 
 void free_sensors() {
-    free(sensors_controller -> ids);
-    free(sensors_controller -> threads_ids);
-    free(sensors_controller);
+    free(sensors_controller.threads_ids);
 }
 
 void kill_sensors() {
