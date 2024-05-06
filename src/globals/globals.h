@@ -2,6 +2,7 @@
 #define GLOBALS_H
 
     #include <pthread.h>
+
     #include "./../data-structures/queue/queue.h"
     #include "./../sensor/sensor.h"
     #include "./../orchestrator/orchestrator.h"

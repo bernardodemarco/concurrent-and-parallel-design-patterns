@@ -13,7 +13,6 @@ typedef struct {
     int num_of_actuators;
 } Input;
 
-
 void suspend_main_thread() {
     syncronize_sensors();
     syncronize_orchestrator();
