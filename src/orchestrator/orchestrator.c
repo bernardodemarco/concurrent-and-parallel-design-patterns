@@ -34,7 +34,7 @@ void *update_actuador(void *args) {
     int actuator = actuator_args -> actuator; 
     int activity_level = actuator_args -> activity_level;
 
-    int time_to_hold = ((rand() % 1001) + 2000) / 1000;
+    int time_to_hold = (rand() % 2) + 2;
 
     pthread_mutex_lock(&(orchestrator -> hash_map_mutex));
     orchestrator -> hash_map -> add_value(orchestrator -> hash_map -> table, actuator, activity_level);

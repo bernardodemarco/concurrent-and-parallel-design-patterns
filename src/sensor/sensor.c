@@ -9,8 +9,6 @@
 
 void *sensor_thread(void *args) {
     while (true) {
-        // generate in ms then convert to s
-        // evaluate usage of seeds
         int task_duration_time = rand() % 5 + 1;
         sleep(task_duration_time);
 
