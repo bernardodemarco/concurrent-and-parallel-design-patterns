@@ -8,6 +8,7 @@
         threadpool thread_pool;
         int num_of_actuators;
         pthread_mutex_t hash_map_mutex;
+        pthread_mutex_t console_mutex;
         HashMap* hash_map;
     } Orchestrator;
 
