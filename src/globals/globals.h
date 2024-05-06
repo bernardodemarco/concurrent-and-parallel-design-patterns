@@ -9,7 +9,7 @@
 
     extern SensorsController sensors_controller;
     extern Queue *queue;
-    extern Orchestrator *orchestrator;
+    extern Orchestrator orchestrator;
     extern pthread_mutex_t producer_consumer_mutex;
 
 #endif

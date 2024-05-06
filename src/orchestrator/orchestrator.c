@@ -15,10 +15,10 @@ int print_output(int actuator_args[2]) {
     int actuator = actuator_args[0]; 
     int activity_level = actuator_args[1];
 
-    pthread_mutex_lock(&(orchestrator -> console_mutex));
+    pthread_mutex_lock(&(orchestrator.console_mutex));
     printf("Changing %d with value %d\n", actuator, activity_level);
     sleep(1);
-    pthread_mutex_unlock(&(orchestrator -> console_mutex));
+    pthread_mutex_unlock(&(orchestrator.console_mutex));
 
     return has_failed();
 }
@@ -31,10 +31,10 @@ void *update_actuador(void *args) {
 
     int time_to_hold = (rand() % 2) + 2;
 
-    pthread_mutex_lock(&(orchestrator -> hash_map_mutex));
-    orchestrator -> hash_map -> add_value(orchestrator -> hash_map -> table, actuator, activity_level);
+    pthread_mutex_lock(&(orchestrator.hash_map_mutex));
+    orchestrator.hash_map -> add_value(orchestrator.hash_map -> table, actuator, activity_level);
     sleep(time_to_hold);
-    pthread_mutex_unlock(&(orchestrator -> hash_map_mutex));
+    pthread_mutex_unlock(&(orchestrator.hash_map_mutex));
 
     int err = has_failed();
     pthread_exit(&err);
@@ -51,7 +51,7 @@ void manage_actuators(void *args) {
     int *captured_value_pointer = (int *) args;
     int captured_value = *captured_value_pointer;
 
-    int actuator = captured_value % orchestrator -> num_of_actuators;
+    int actuator = captured_value % orchestrator.num_of_actuators;
     int activity_level = rand() % 101;
 
     update_actuator_args[0] = actuator;
@@ -70,7 +70,7 @@ void manage_actuators(void *args) {
 }
 
 void *orchestrator_thread(void *args) {
-    orchestrator -> thread_pool = thpool_init(4);
+    orchestrator.thread_pool = thpool_init(4);
 
     while (1) {
         pthread_mutex_lock(&producer_consumer_mutex);
@@ -83,21 +83,20 @@ void *orchestrator_thread(void *args) {
 
         int *captured_value_copy = (int *) malloc(sizeof(int)); 
         *captured_value_copy = captured_value;
-        thpool_add_work(orchestrator -> thread_pool, (void *) manage_actuators, (void *) captured_value_copy);
+        thpool_add_work(orchestrator.thread_pool, (void *) manage_actuators, (void *) captured_value_copy);
     }
 }
 
 void init_orchestrator(int num_of_actuators) {
-    orchestrator = (Orchestrator *) malloc(sizeof(Orchestrator));
-    orchestrator -> num_of_actuators = num_of_actuators;
-    orchestrator -> hash_map = init_hash_map(orchestrator -> num_of_actuators);
-    pthread_mutex_init(&(orchestrator -> hash_map_mutex), NULL);
-    pthread_mutex_init(&(orchestrator -> console_mutex), NULL);
-    pthread_create(&(orchestrator -> thread_id), NULL, orchestrator_thread, NULL);
+    orchestrator.num_of_actuators = num_of_actuators;
+    orchestrator.hash_map = init_hash_map(orchestrator.num_of_actuators);
+    pthread_mutex_init(&(orchestrator.hash_map_mutex), NULL);
+    pthread_mutex_init(&(orchestrator.console_mutex), NULL);
+    pthread_create(&(orchestrator.thread_id), NULL, orchestrator_thread, NULL);
 }
 
 void syncronize_orchestrator() {
-    int err = pthread_join(orchestrator -> thread_id, NULL);
+    int err = pthread_join(orchestrator.thread_id, NULL);
     if (err) {
         printf("Error syncronizing orchestrator thread\n");
         exit(1);

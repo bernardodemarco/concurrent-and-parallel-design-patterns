@@ -2,5 +2,5 @@
 
 SensorsController sensors_controller;
 Queue *queue;
-Orchestrator *orchestrator;
+Orchestrator orchestrator;
 pthread_mutex_t producer_consumer_mutex;
