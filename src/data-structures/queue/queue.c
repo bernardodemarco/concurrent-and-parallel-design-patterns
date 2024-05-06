@@ -29,7 +29,6 @@ int dequeue() {
     Node *element_to_be_removed = queue -> head;
 
     if (element_to_be_removed == NULL) {
-        // empty queue
         return -1;
     }
 

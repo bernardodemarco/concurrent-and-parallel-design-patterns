@@ -5,7 +5,6 @@
     #include "./data-structures/queue/queue.h"
     #include "./sensor/sensor.h"
     #include "./orchestrator/orchestrator.h"
-    // #include "./lib/thread-pool/thpool.h"
 
     extern SensorsController *sensors_controller;
     extern Queue *queue;

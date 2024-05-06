@@ -1,5 +1,4 @@
 #include "./globals.h"
-// #include "./lib/thread-pool/thpool.h"
 
 SensorsController *sensors_controller;
 Queue *queue;

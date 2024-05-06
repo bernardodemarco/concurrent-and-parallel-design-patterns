@@ -1,4 +1,5 @@
 #include <stdlib.h>
+
 #include "./hashmap.h"
 
 void add_value(int *table, int bucket_index, int value) {
