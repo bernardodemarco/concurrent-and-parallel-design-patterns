@@ -20,13 +20,14 @@ void suspend_main_thread() {
 
 Input get_inputs() {
     Input inputs;
-    inputs.num_of_sensors = get_int_input("Enter the number of sensors of the vehicle: \n");
-    inputs.num_of_actuators = get_int_input("Enter the number of actuators of the vehicle: \n");
+    inputs.num_of_sensors = get_int_input("Enter the number of sensors of the vehicle:");
+    inputs.num_of_actuators = get_int_input("Enter the number of actuators of the vehicle:");
     return inputs;
 }
 
 int main() {
-    printf("Welcome to the Autonomous Cars Parallel Application!\n");
+    printf("\033[0;32mWelcome to the Autonomous Cars Parallel Application!\n\033[0m");
+
     Input inputs = get_inputs();
 
     pthread_mutex_init(&producer_consumer_mutex, NULL);

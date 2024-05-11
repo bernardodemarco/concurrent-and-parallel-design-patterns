@@ -63,7 +63,7 @@ void manage_actuators(void *args) {
 
     pthread_join(actuator_thread_id, (void *) &update_actuator_err);
     if (*update_actuator_err || print_output_err) {
-        printf("Fail: %d\n", actuator);
+        printf("\033[0;31mFail: %d\n\033[0m", actuator);
     }
 
     free(captured_value_pointer);
