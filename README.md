@@ -1,5 +1,5 @@
 TODO:
-- [ ]: Colorize outputs
-- [ ]: Clean HashMap code
-- [ ]: Scan code
+- [x]: Colorize outputs
+- [x]: Clean HashMap code
+- [x]: Scan code
 - [ ]: Documentation

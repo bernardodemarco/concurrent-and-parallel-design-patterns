@@ -1,14 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <stdbool.h>
 #include <pthread.h>
 
 #include "./../utils/utils.h"
 #include "./../globals/globals.h"
 
 void *sensor_thread(void *args) {
-    while (true) {
+    while (1) {
         int task_duration_time = rand() % 5 + 1;
         sleep(task_duration_time);
 

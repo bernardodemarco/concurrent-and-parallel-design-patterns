@@ -65,8 +65,7 @@ void manage_actuators(void *args) {
     update_actuator_args.mapping[1] = activity_level;
     update_actuator_args.update_actuator_err = update_actuator_err;
 
-    pthread_create(&actuator_thread_id, NULL, update_actuador, (void *) (&(update_actuator_args)));
-
+    pthread_create(&actuator_thread_id, NULL, update_actuador, (void *) (&update_actuator_args));
     print_output_err = print_output(update_actuator_args);
 
     pthread_join(actuator_thread_id, NULL);
@@ -103,7 +102,6 @@ int get_number_of_hash_map_critical_sections(double num_of_fields) {
 
 void init_hash_map_mutexes(int num_of_fields) {
     int num_of_sections = get_number_of_hash_map_critical_sections((double) num_of_fields);
-    printf("(num_of_sections = %d) \n", num_of_sections);
 
     pthread_mutex_t *mutexes = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * num_of_sections);
     for (int i = 0; i < num_of_sections; i++) {
