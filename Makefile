@@ -19,6 +19,6 @@ C_FILES=$(SRC)/*.c \
 app:
 	$(CC) $(C_FILES) $(FLAGS) $(BUILD)/app -lm
 run:
-	./build/app
+	$(BUILD)/app
 clean:
 	rm $(BUILD)/*
