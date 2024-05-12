@@ -37,7 +37,6 @@ void *update_actuador(void *args) {
 
     int time_to_hold = (rand() % 2) + 2;
 
-printf("debugign");
     int actuator_critical_section = actuator % orchestrator.num_of_critical_sections;
     
     printf("actuator = %d && num_of_critical_sections = %d && critical_section = %d\n", actuator, orchestrator.num_of_critical_sections, actuator_critical_section);
@@ -47,13 +46,10 @@ printf("debugign");
     sleep(time_to_hold);
     pthread_mutex_unlock(&(orchestrator.hash_map_mutexes[actuator_critical_section]));
 
-    // *(int *) args = has_failed();
-
     *(actuator_args -> update_actuator_err) = has_failed();
 }
 
 void manage_actuators(void *args) {
-    // int update_actuator_args[2];
     pthread_t actuator_thread_id;
 
     UpdateActuatorArgs update_actuator_args;
@@ -64,7 +60,6 @@ void manage_actuators(void *args) {
     int *captured_value_pointer = (int *) args;
     int captured_value = *captured_value_pointer;
 
-    printf("captured_value = %d && num_actuators=%d", captured_value, orchestrator.num_of_actuators);
     int actuator = captured_value % orchestrator.num_of_actuators;
     int activity_level = rand() % 101;
 
@@ -77,12 +72,10 @@ void manage_actuators(void *args) {
     print_output_err = print_output(update_actuator_args);
 
     pthread_join(actuator_thread_id, NULL);
-    printf("update_actuator_err = %d && print_output_err = %d\n", *update_actuator_err, print_output_err);
     if (*update_actuator_err || print_output_err) {
-        printf("\033[0;31mFail: %d (update_actuator_err = %d) && (print_output_err=%d)\n\033[0m", actuator, *update_actuator_err, print_output_err);
+        printf("\033[0;31mFail: %d\n\033[0m", actuator);
     }
 
-    // free(update_actuator_args);
     free(captured_value_pointer);
 }
 
@@ -104,28 +97,14 @@ void *orchestrator_thread(void *args) {
     }
 }
 
-int get_number_of_hash_map_critical_sections(int num_of_fields) {
-    printf("getting number of hashmap critical sections (granularity = 20 && num_of_fields = %d) \n", num_of_fields);
-
+int get_number_of_hash_map_critical_sections(double num_of_fields) {
     int granularity = 20;
 
-
-    // 128 / 20 = 6.4
-    // 7 sections -> 7 mutexes
-
-    // field % 7
-
-    // 100 / 20 = 5
-    // 200 / 20 = 10
-
-    // 2 / 20
-    // error here is == 0 then 0 division
-    printf("%f\n", ceil(num_of_fields / granularity));
     return (int) ceil(num_of_fields / granularity);
 }
 
 void init_hash_map_mutexes(int num_of_fields) {
-    int num_of_sections = get_number_of_hash_map_critical_sections(num_of_fields);
+    int num_of_sections = get_number_of_hash_map_critical_sections((double) num_of_fields);
     printf("(num_of_sections = %d) \n", num_of_sections);
 
     pthread_mutex_t *mutexes = (pthread_mutex_t *) malloc(sizeof(pthread_mutex_t) * num_of_sections);
@@ -142,7 +121,6 @@ void init_orchestrator(int num_of_actuators) {
     orchestrator.hash_map = init_hash_map(orchestrator.num_of_actuators);
 
     init_hash_map_mutexes(num_of_actuators);
-    // pthread_mutex_init(&(orchestrator.hash_map_mutex), NULL);
     pthread_mutex_init(&(orchestrator.console_mutex), NULL);
 
     pthread_create(&(orchestrator.thread_id), NULL, orchestrator_thread, NULL);
