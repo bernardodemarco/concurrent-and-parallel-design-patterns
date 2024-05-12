@@ -1,7 +1,7 @@
 CC=gcc
 
 FLAGS=-pthread \
-      -o
+      -o \
 
 BUILD=./build
 
@@ -17,8 +17,8 @@ C_FILES=$(SRC)/*.c \
         $(SRC)/lib/C-Thread-Pool/thpool.c \
 
 app:
-	$(CC) $(C_FILES) $(FLAGS) $(BUILD)/app
+	$(CC) $(C_FILES) $(FLAGS) $(BUILD)/app -lm
 run:
-	$(BUILD)/app
+	./build/app
 clean:
 	rm $(BUILD)/*
