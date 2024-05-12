@@ -26,7 +26,7 @@ Input get_inputs() {
 }
 
 int main() {
-    printf("\033[0;32mWelcome to the Autonomous Cars Parallel Application!\n\033[0m");
+    printf("\033[1;35mWelcome to the Autonomous Cars Application!\n\033[0m");
 
     Input inputs = get_inputs();
 
@@ -38,5 +38,6 @@ int main() {
 
     suspend_main_thread();
     pthread_mutex_destroy(&producer_consumer_mutex);
+    
     return 0;
 }

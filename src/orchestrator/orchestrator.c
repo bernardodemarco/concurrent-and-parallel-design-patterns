@@ -22,7 +22,7 @@ int print_output(UpdateActuatorArgs actuator_args) {
     int activity_level = actuator_args.mapping[1];
 
     pthread_mutex_lock(&(orchestrator.console_mutex));
-    printf("Changing %d with value %d\n", actuator, activity_level);
+    printf("\033[1;36mChanging actuator \033[1;32m[%d]\033[1;36m with value \033[1;32m[%d]\033[0m\n", actuator, activity_level);
     sleep(1);
     pthread_mutex_unlock(&(orchestrator.console_mutex));
 
@@ -38,9 +38,7 @@ void *update_actuador(void *args) {
     int time_to_hold = (rand() % 2) + 2;
 
     int actuator_critical_section = actuator % orchestrator.num_of_critical_sections;
-    
-    printf("actuator = %d && num_of_critical_sections = %d && critical_section = %d\n", actuator, orchestrator.num_of_critical_sections, actuator_critical_section);
-    
+
     pthread_mutex_lock(&(orchestrator.hash_map_mutexes[actuator_critical_section]));
     orchestrator.hash_map -> add_value(orchestrator.hash_map -> table, actuator, activity_level);
     sleep(time_to_hold);
@@ -73,7 +71,7 @@ void manage_actuators(void *args) {
 
     pthread_join(actuator_thread_id, NULL);
     if (*update_actuator_err || print_output_err) {
-        printf("\033[0;31mFail: %d\n\033[0m", actuator);
+        printf("\033[1;31mAn error occurred in the actuator [%d]\n\033[0m", actuator);
     }
 
     free(captured_value_pointer);
