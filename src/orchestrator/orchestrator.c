@@ -75,6 +75,7 @@ void manage_actuators(void *args) {
         fflush(stdout);
     }
 
+    free(update_actuator_err);
     free(captured_value_pointer);
 }
 
