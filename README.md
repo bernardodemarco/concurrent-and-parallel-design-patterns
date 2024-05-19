@@ -86,7 +86,7 @@ Changing actuator [61] with value [88]
 Changing actuator [112] with value [38]
 ```
 
-| Total de _logs_ | Número alterações nos atuadores | Número de erros |
+| Total de _logs_ | Número de alterações nos atuadores | Número de erros |
 | :----------------: | :-----------------: | :-----------------: |
 |        30         |        23          | 7 |
 
@@ -103,42 +103,44 @@ Durante essa execução, observou-se que o fluxo de geração de _logs_ foi bem 
 #### Saída
 
 ```bash
-Changing actuator [59] with value [75]
-Changing actuator [18] with value [84]
-Changing actuator [9] with value [19]
-Changing actuator [23] with value [86]
-Changing actuator [87] with value [23]
-Changing actuator [70] with value [5]
-Changing actuator [72] with value [10]
+Changing actuator [73] with value [7]
+Changing actuator [80] with value [84]
+Changing actuator [3] with value [14]
+An error occurred in the actuator [80]
+Changing actuator [36] with value [45]
+Changing actuator [72] with value [42]
 An error occurred in the actuator [72]
-Changing actuator [78] with value [43]
-Changing actuator [60] with value [19]
-Changing actuator [31] with value [13]
-An error occurred in the actuator [31]
-Changing actuator [63] with value [96]
-Changing actuator [88] with value [0]
-Changing actuator [56] with value [70]
-Changing actuator [19] with value [12]
-An error occurred in the actuator [19]
-Changing actuator [75] with value [54]
-An error occurred in the actuator [75]
-Changing actuator [60] with value [76]
-Changing actuator [98] with value [1]
-Changing actuator [84] with value [4]
-An error occurred in the actuator [84]
-Changing actuator [10] with value [23]
-Changing actuator [20] with value [9]
-Changing actuator [76] with value [98]
-Changing actuator [84] with value [94]
-An error occurred in the actuator [84]
-Changing actuator [54] with value [21]
-Changing actuator [40] with value [92]
+Changing actuator [15] with value [38]
+An error occurred in the actuator [15]
+Changing actuator [97] with value [35]
+An error occurred in the actuator [97]
+Changing actuator [94] with value [77]
+Changing actuator [72] with value [68]
+Changing actuator [59] with value [45]
+Changing actuator [20] with value [50]
+Changing actuator [65] with value [59]
+An error occurred in the actuator [65]
+Changing actuator [37] with value [77]
+Changing actuator [4] with value [4] # Change of 4th actuator's activity level
+Changing actuator [72] with value [36]
+An error occurred in the actuator [72]
+Changing actuator [24] with value [38]
+Changing actuator [39] with value [1]
+An error occurred in the actuator [39]
+Changing actuator [61] with value [12]
+An error occurred in the actuator [4] # error in the 4th actuator
+Changing actuator [49] with value [78]
+Changing actuator [92] with value [22]
+Changing actuator [97] with value [65]
+An error occurred in the actuator [97]
 ```
 
 | Total de _logs_ | Número alterações nos atuadores | Número de erros |
 | :----------------: | :-----------------: | :-----------------: |
 |        30         |        24          | 6 |
 
-Em alguns momentos, observou-se uma execução ligeiramente menos fluída do que à anterior. Isso poden ser explicado pelo fato de que a quantidade de sensores é igual ao dobro da quantidade de atuadores.
+Em alguns momentos, observou-se que o erro foi impresso depois de uma quantidade significativa de _logs_ de alteração, como observa-se com o atuator `4` no _output_. Isso deve-se ao fato de que a quantidade de sensores é igual ao dobro da quantidade de atuadores.
 
-Com isso, a quantidade de valores que são inseridos no _buffer_ do produtor/consumidor tende a dobrar. Concomitantemente, a quantidade de atuadores diminui em `100`. Isso leva a dividir a tabela de atuadores em `5` regiões críticas (`100`/`20`). No exemplo anterior eram `10` regiões críticas. Com isso, menos _threads_ eram suspensas esperando passar pelo _mutex_.
+Com isso, a quantidade de valores que são inseridos no _buffer_ do produtor/consumidor tende a dobrar. Concomitantemente, a quantidade de atuadores diminui em `100`. Isso leva a dividir a tabela de atuadores em `5` regiões críticas (`100 / 20`). No exemplo anterior eram `10` regiões críticas.
+
+Por conseguinte, uma quantidade maior de dados sensoriais disputam menos regiões críticas. Isso ocasiona um enfileiramento de tarefas em estado suspenso maior e mais frequente, retardando a modificação do campo da tabela de um dado atuador.
