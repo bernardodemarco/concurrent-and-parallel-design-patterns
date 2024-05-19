@@ -40,3 +40,105 @@ Foi utilizado o `Makefile` para facilitar a compilação da aplicação. O arqui
     ```bash
     make clean
     ```
+
+## Exemplos de saídas de execução
+
+### Quantidade de atuadores igual ao dobro da quantidade de sensores
+
+#### Parâmetros de entrada
+
+| Número de sensores | Número de atuadores |
+| :----------------: | :-----------------: |
+|        100         |        200          |
+
+#### Saída
+
+```bash
+Changing actuator [90] with value [89]
+Changing actuator [22] with value [69]
+Changing actuator [73] with value [7]
+An error occurred in the actuator [73]
+Changing actuator [63] with value [17]
+Changing actuator [105] with value [38]
+An error occurred in the actuator [105]
+Changing actuator [180] with value [61]
+Changing actuator [103] with value [27]
+Changing actuator [136] with value [95]
+An error occurred in the actuator [136]
+Changing actuator [72] with value [36]
+Changing actuator [115] with value [55]
+An error occurred in the actuator [115]
+Changing actuator [197] with value [8]
+Changing actuator [19] with value [39]
+An error occurred in the actuator [19]
+Changing actuator [172] with value [32]
+Changing actuator [59] with value [3]
+Changing actuator [59] with value [7]
+Changing actuator [165] with value [26]
+Changing actuator [37] with value [93]
+Changing actuator [104] with value [93]
+Changing actuator [72] with value [37]
+Changing actuator [124] with value [92]
+Changing actuator [39] with value [32]
+An error occurred in the actuator [104]
+An error occurred in the actuator [39]
+Changing actuator [61] with value [88]
+Changing actuator [112] with value [38]
+```
+
+| Total de _logs_ | Número alterações nos atuadores | Número de erros |
+| :----------------: | :-----------------: | :-----------------: |
+|        30         |        23          | 7 |
+
+Durante essa execução, observou-se que o fluxo de geração de _logs_ foi bem fluído, respeitando-se o requisito de cada _log_ de alteração segurar o console por um segundo.
+
+### Quantidade de sensores igual ao dobro da quantidade de atuadores
+
+#### Parâmetros de entrada
+
+| Número de sensores | Número de atuadores |
+| :----------------: | :-----------------: |
+|        200         |        100          |
+
+#### Saída
+
+```bash
+Changing actuator [59] with value [75]
+Changing actuator [18] with value [84]
+Changing actuator [9] with value [19]
+Changing actuator [23] with value [86]
+Changing actuator [87] with value [23]
+Changing actuator [70] with value [5]
+Changing actuator [72] with value [10]
+An error occurred in the actuator [72]
+Changing actuator [78] with value [43]
+Changing actuator [60] with value [19]
+Changing actuator [31] with value [13]
+An error occurred in the actuator [31]
+Changing actuator [63] with value [96]
+Changing actuator [88] with value [0]
+Changing actuator [56] with value [70]
+Changing actuator [19] with value [12]
+An error occurred in the actuator [19]
+Changing actuator [75] with value [54]
+An error occurred in the actuator [75]
+Changing actuator [60] with value [76]
+Changing actuator [98] with value [1]
+Changing actuator [84] with value [4]
+An error occurred in the actuator [84]
+Changing actuator [10] with value [23]
+Changing actuator [20] with value [9]
+Changing actuator [76] with value [98]
+Changing actuator [84] with value [94]
+An error occurred in the actuator [84]
+Changing actuator [54] with value [21]
+Changing actuator [40] with value [92]
+```
+
+| Total de _logs_ | Número alterações nos atuadores | Número de erros |
+| :----------------: | :-----------------: | :-----------------: |
+|        30         |        24          | 6 |
+
+Em alguns momentos, observou-se uma execução ligeiramente menos fluída do que à anterior. Isso poden ser explicado pelo fato de que a quantidade de sensores é igual ao dobro da quantidade de atuadores.
+
+Com isso, a quantidade de valores que são inseridos no _buffer_ do produtor/consumidor tende a dobrar. Concomitantemente, a quantidade de atuadores diminui em `100`. Isso leva a dividir a tabela de atuadores em `5` regiões críticas (`100`/`20`). No exemplo anterior eram `10` regiões críticas. Com isso, menos _threads_ eram suspensas esperando passar pelo _mutex_.
