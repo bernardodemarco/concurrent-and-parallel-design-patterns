@@ -23,6 +23,7 @@ int print_output(UpdateActuatorArgs actuator_args) {
 
     pthread_mutex_lock(&(orchestrator.console_mutex));
     printf("\033[1;36mChanging actuator \033[1;32m[%d]\033[1;36m with value \033[1;32m[%d]\033[0m\n", actuator, activity_level);
+    fflush(stdout);
     sleep(1);
     pthread_mutex_unlock(&(orchestrator.console_mutex));
 
@@ -71,6 +72,7 @@ void manage_actuators(void *args) {
     pthread_join(actuator_thread_id, NULL);
     if (*update_actuator_err || print_output_err) {
         printf("\033[1;31mAn error occurred in the actuator [%d]\n\033[0m", actuator);
+        fflush(stdout);
     }
 
     free(captured_value_pointer);
