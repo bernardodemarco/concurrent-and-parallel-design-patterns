@@ -1,11 +1,12 @@
-# Concurrent and Parallel Programming Design Patterns in C: Implementation and Usage
+# Implementation and Usage of Concurrent and Parallel Programming Design Patterns
 
-This project is a simulation of an automatic triggering system for autonomous vehicles. It focuses on the practical implementation and application of classical concurrent and parallel design patterns in C.  The following design patterns were implemented manually using POSIX threads and synchronization primitives:
-- Producer/Consumer;
-- Fork/Join; and,
+This project is a simulation of an automatic triggering system for autonomous vehicles. It focuses on the practical implementation and usage of **classical concurrent and parallel design patterns** in C. The following design patterns were implemented manually using POSIX threads and synchronization primitives:
+
+- Producer and Consumer;
+- Fork-Join; and,
 - Mutex-based Critical Sections.
 
-The only external dependency used was a thread pool implementation, provided by the [C-Thread-Pool](https://github.com/Pithikos/C-Thread-Pool) library.
+The only external dependency used was a thread pool implementation, provided by the [C-Thread-Pool](https://github.com/Pithikos/C-Thread-Pool) library. It offers a simple and clean API, and uses a **queue-based task buffer**.
 
 ## Table of Contents
 
@@ -28,11 +29,9 @@ While the actuator update is performed, a log is also printed. Each log message 
 
 ## Technologies Used
 
-- C programming language
-- POSIX library for multithreading and synchronization
-- [C-Thread-Pool](https://github.com/Pithikos/C-Thread-Pool)
-
-The [C-Thread-Pool](https://github.com/Pithikos/C-Thread-Pool) library was used for thread pool management. It offers a simple and clean API, and its source code was reviewed to ensure it uses a **queue-based task buffer**.
+- C programming language;
+- POSIX library for multithreading and synchronization; and,
+- [C-Thread-Pool](https://github.com/Pithikos/C-Thread-Pool).
 
 ## Setup Instructions
 
