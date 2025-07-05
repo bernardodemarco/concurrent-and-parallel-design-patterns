@@ -1,57 +1,67 @@
-# Trabalho 1 - INE5645
+# Concurrent and Parallel Programming Design Patterns in C: Implementation and Usage
 
-#### Bernardo De Marco Gonçalves - 22102557
+This project is a simulation of an automatic triggering system for autonomous vehicles. It focuses on the practical implementation and application of classical concurrent and parallel design patterns in C.  The following design patterns were implemented manually using POSIX threads and synchronization primitives:
+- Producer/Consumer;
+- Fork/Join; and,
+- Mutex-based Critical Sections.
 
-## _Design_ da aplicação 
+The only external dependency used was a thread pool implementation, provided by the [C-Thread-Pool](https://github.com/Pithikos/C-Thread-Pool) library.
 
-A aplicação é composta por N sensores (valor parametrizável via _input_). Cada sensor é uma _thread_ que executa um _loop_ inifinito, produzindo valores aleatórios e os inserindo no _buffer_ do produtor/consumidor.
+## Table of Contents
 
-O _core_ da aplicação concentra-se na central de controle (_orchestrator_). Esse componente é uma única _thread_ que gerencia os atuadores do veículo, através de um _thread pool_ de `4` _threads_ e uma tabela de controle. Além disso, o _orchestrator_ é o o responsável por consumir os dados produzidos pelos sensores do veículo.
+- [Application Design](#application-design)
+- [Technologies Used](#technologies-used)
 
-Sempre que o _orchestrator_ consumir um valor do _buffer_, ele envia o valor juntamente com uma _task_ a ser executada para uma _thread_ do _thread pool_. Cada _task_ é responsável por determinar o atuador e o nível de atividade, atualizar o registro do atuador e gerar um _log_ no terminal. 
+## Application Design
 
-A atualização e a geração dos _logs_ são executados em paralelo (_fork-join_). Caso ocorra algum erro em alguma dessas subtarefas, a _task_ é responsável por gerar uma saída informando o erro ocorrido. 
+The application consists of `N` sensors (where `N` is configurable via input). Each sensor is a thread running an infinite loop that continuously generates random values and inserts them into a shared buffer, following the **producer/consumer pattern**.
 
-Para atualização do atuador, o seu nível de atividade na tabela de atuadores é atualizado, e permanece inalterado por dois ou três segundos. Para não definir a tabela inteira como uma única zona de exclusão mútua, ela foi dividida em seções críticas com uma granularidade pré-determinada de `20`. Ou seja, quando um atuador tiver seu nível de atividade atualizado apenas a sua seção será travada, e não a tabela inteira. 
+At the core of the system lies the control center, referred to as the **orchestrator**. This is a single thread responsible for consuming values from the shared buffer and managing vehicle actuators via a fixed-size thread pool (`4` threads) and an actuator control table.
 
-Concomitantemente à atualização da tabela, o _log_ é gerado. Sempre que um _log_ é impresso, ele será mantido no console por um segundo. Por fim, a _task_ do _thread pool_, ao sincronizar o _fork-join_, checa se houve algum erro em alguma tarefa (`20%` de chance de erro em cada uma). Caso algum erro tenha ocorrido, um _log_ de erro é gerado e impresso no terminal.
+Every time the orchestrator consumes a value, it packages the value into a task and dispatches it to one of the threads in the thread pool. Each task is responsible for determining the target actuator and activity level, updating the control table, and generating a log message on the terminal.
 
-## Tecnologias adotadas
+The actuator update and log generation are performed in parallel using a **fork-join strategy**. If an error occurs during either of these subtasks, the task is responsible for logging the failure.
 
-- Linguagem de programação C
-- POSIX _library_
+To update an actuator, its activity level in the control table is modified and held for 2 to 3 seconds. Instead of locking the entire table as a single critical section, the table is divided into segments, each representing a critical region with a granularity of `20`. This means only the relevant section of the table is locked during updates, not the whole structure.
+
+While the actuator update is performed, a log is also printed. Each log message remains visible on the console for one second. After synchronizing the fork-join subtasks, the thread pool task checks for errors (each subtask has a 20% chance of failing). If any errors occurred, an error log is printed to the terminal.
+
+## Technologies Used
+
+- C programming language
+- POSIX library for multithreading and synchronization
 - [C-Thread-Pool](https://github.com/Pithikos/C-Thread-Pool)
 
-A biblioteca [C-Thread-Pool](https://github.com/Pithikos/C-Thread-Pool) foi utilizada para o uso de _thread pools_. Ela possui uma API clara e de fácil utilização. Além disso, seu código-fonte foi verificado e foi certificado que ela utiliza uma _queue_ como _buffer_ de _tasks_ do _pool_. Com isso, foi possível utilizá-la para cumprir requisitos da aplicação.
+The [C-Thread-Pool](https://github.com/Pithikos/C-Thread-Pool) library was used for thread pool management. It offers a simple and clean API, and its source code was reviewed to ensure it uses a **queue-based task buffer**.
 
-## Instruções de _setup_
+## Setup Instructions
 
-Foi utilizado o `Makefile` para facilitar a compilação da aplicação. O arquivo compilado é o arquivo `app` localizado na pasta `build`.
+A `Makefile` was used to simplify the compilation process. The resulting binary is named `app` and is located in the `build` directory.
 
-- Compilar:
+- Compile:
     ```bash
     make compile
     ```
-- Rodar:
+- Run:
     ```bash
     make run
     ```
-- Limpar:
+- Clean:
     ```bash
     make clean
     ```
 
-## Exemplos de saídas de execução
+## Execution Examples
 
-### Quantidade de atuadores igual ao dobro da quantidade de sensores
+### Number of actuators equal to twice the number of sensors
 
-#### Parâmetros de entrada
+#### Input Parameters
 
-| Número de sensores | Número de atuadores |
+| Number of sensors | Number of actuators |
 | :----------------: | :-----------------: |
 |        100         |        200          |
 
-#### Saída
+#### Output
 
 ```bash
 Changing actuator [90] with value [89]
@@ -86,21 +96,21 @@ Changing actuator [61] with value [88]
 Changing actuator [112] with value [38]
 ```
 
-| Total de _logs_ | Número de alterações nos atuadores | Número de erros |
+| Number of logs | Number of changes in the actuators | Number of Errors |
 | :----------------: | :-----------------: | :-----------------: |
 |        30         |        23          | 7 |
 
-Durante essa execução, observou-se que o fluxo de geração de _logs_ foi bem fluído, respeitando-se o requisito de cada _log_ de alteração segurar o console por um segundo.
+During this execution, the log generation flow was smooth, consistently meeting the requirement that each update log should hold the console for one second.
 
-### Quantidade de sensores igual ao dobro da quantidade de atuadores
+### Number of sensors equal to twice the number of actuators
 
-#### Parâmetros de entrada
+#### Input Parameter
 
-| Número de sensores | Número de atuadores |
+| Number of sensors | Number of actuators |
 | :----------------: | :-----------------: |
 |        200         |        100          |
 
-#### Saída
+#### Output
 
 ```bash
 Changing actuator [73] with value [7]
@@ -135,12 +145,12 @@ Changing actuator [97] with value [65]
 An error occurred in the actuator [97]
 ```
 
-| Total de _logs_ | Número alterações nos atuadores | Número de erros |
+| Number of logs | Number of changes in the actuators | Number of Errors |
 | :----------------: | :-----------------: | :-----------------: |
 |        30         |        24          | 6 |
 
-Em alguns momentos, observou-se que o erro foi impresso depois de uma quantidade significativa de _logs_ de alteração, como observa-se com o atuator `4` no _output_. Isso deve-se ao fato de que a quantidade de sensores é igual ao dobro da quantidade de atuadores.
+In this scenario, it was observed that error messages were occasionally printed only after a significant number of update logs had already appeared, such as in the case of actuator `4`, as seen in the output. This behavior is due to the sensor count being twice the actuator count.
 
-Com isso, a quantidade de valores que são inseridos no _buffer_ do produtor/consumidor tende a dobrar. Concomitantemente, a quantidade de atuadores diminui em `100`. Isso leva a dividir a tabela de atuadores em `5` regiões críticas (`100 / 20`). No exemplo anterior eram `10` regiões críticas.
+As a result, the number of values inserted into the producer/consumer buffer tends to double. At the same time, the number of actuators is reduced to `100`, leading to the actuator table being split into only `5` critical regions (`100 / 20`). In the previous scenario, there were `10` critical regions.
 
-Por conseguinte, uma quantidade maior de dados sensoriais disputam menos regiões críticas. Isso ocasiona um enfileiramento de tarefas em estado suspenso maior e mais frequente, retardando a modificação do campo da tabela de um dado atuador.
+Consequently, more sensor data competes for fewer critical regions. This increases the frequency and duration of task queuing in a suspended state, delaying updates to the actuator table entries.
