@@ -1,4 +1,4 @@
-# Implementation and Usage of Concurrent and Parallel Programming Design Patterns
+# Concurrent and Parallel Programming Design Patterns
 
 This project is a simulation of an automatic triggering system for autonomous vehicles. It focuses on the practical implementation and usage of **classical concurrent and parallel design patterns** in C. The following design patterns were implemented manually using POSIX threads and synchronization primitives:
 
