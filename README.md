@@ -12,6 +12,7 @@ The only external dependency used was a thread pool implementation, provided by 
 
 - [Application Design](#application-design)
 - [Technologies Used](#technologies-used)
+- [Setup Instructions](#setup-instructions)
 - [Execution Examples](#execution-examples)
 
 ## Application Design
